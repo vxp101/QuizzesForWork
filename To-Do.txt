@@ -1,0 +1,12 @@
+Add an end score system
+
+Retrieve entire list of games for Hard
+&& Make an eye friendly UI for list
+
+Add Timer To Speed Run
+
+Super Hard Will be Hard with a Timer
+
+Make similarly named games appear more often
+
+If I want images to load faster I would need to manually make the images smaller in the preview

@@ -1,0 +1,116 @@
+#main_scrn{
+	background: rgb(2, 0, 36);
+	background: linear-gradient(180deg, rgba(2, 0, 36, 1) 0%, rgba(46, 46, 193, 1) 35%, rgba(0, 212, 255, 1) 100%);
+}
+
+body{	
+	overflow: hidden;
+	background-color: black;
+	color: white;
+	-webkit-user-select: none;	
+}
+.header{
+	text-align:center;
+}
+
+#menu{
+	visibility: "visible";
+	height:40px;
+	width: 200px;
+	font-size: 30px;
+}
+
+label{
+	background-color: white;
+	color: black;
+	border-end-start-radius: 20%;
+    	border-start-end-radius: 20%;
+}
+
+button{
+	background-color: white;
+	font-weight: bold;
+	width: 100px;
+	align-self: center;
+	color: black;
+}
+
+button:disabled{
+	background-color: grey;						
+}
+
+#options{
+	display: grid;
+	grid-template-columns: max-content;
+	font-weight: bold;
+	font-size: 20px;
+	height: 30px;
+	width: 200px;
+	flex-direction: column;
+	height: 30px;
+	width: 200px;
+	margin-left: 10;
+	margin-top: 100;
+}
+
+#next_button{
+	width: 100px;
+}
+
+#top_menu{
+	
+	justify-content: center;
+	align-items: center;
+	text-align: center;
+}
+
+img{
+	width: 20%;
+	height: 500px;
+	border: solid 5px #000000;
+	border-radius: 10%;
+	margin-top: 30;
+}
+
+#guess_label{
+	font-weight: bold;
+	width: 100px;
+}
+
+input{
+	display: flex;
+	visibility: hidden;
+}
+
+#items{
+	display: flex;
+	justify-content: center;
+}
+
+*:not(#ready_up):not(body):not(html){
+	visibility: hidden;
+}
+
+#ready_up{
+	position: fixed;
+	left: 45%;
+	top: 50%;
+	height: 100px;
+	width: 150px;
+}
+
+
+@keyframes end_game_pulse{
+	0% {
+		transform: scale(1)
+	}
+	20% {
+		transform: scale(1.25)
+	}
+@keyframes end_game_slide{
+	from {top: 50%}
+	to {top: translateY(3em)}
+	
+}
+	
+}

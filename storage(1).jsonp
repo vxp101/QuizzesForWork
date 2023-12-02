@@ -1,0 +1,54 @@
+storage = {
+	VendorList : ["AGS", "Ainsworth", "Alfastreet", "Apex Pro Gaming", "Aristocrat", "Aruze", "Bally(Scientific Games)", "BluBeri", "Everi_Multimedia", "Gaming Arts", "IGT", "Incredible Technologies", "Interblock", "Konami", "LightningGaming(IGT)", "LnW (Bally, Scientific Games)", "Novamatic", "Scientific Games", "Sega Sammy", "WMS", "Zitro"],
+        VendorDictionary : {
+
+                "AGS":["Big Red.jpg", "Icon.jpg", "Orion Curve.jpeg", "Orion Rise.jpeg", "Orion ST42P.jpg", "Orion UR.jpg", "Orion.jpg", "SLCOLLS.jpeg"],
+
+                "Ainsworth":["A560 S32.jpg", "A560 ST.jpg", "A560H.jpg", "A560L WB.jpg", "A600H.jpg", "A620.jpg", "A640.jpg", "ASTAR Curve.jpeg"],
+
+                "Alfastreet":["Multitouch Roulette 2.jpg", "Multitouch Roulette.jpg", "TTM3 Lucky 8.jpeg"],
+
+                "Apex Pro Gaming":["Pinnacle Premium Curve.jpeg", "Pinnacle Premium SL.jpeg"],
+
+                "Aristocrat":["Arc Double.jpg", "Arc Single.jpg", "Behemoth.jpg", "Edge X.jpg", "Flame 55.jpeg", "Helix Plus Slant.jpg", "Helix Plus UR.jpg", "Helix ST 2.jpg", "Helix UR.jpg", "Helix XT.jpg", "MarsX Portrait.jpeg",
+                "MarsX.jpg", "Neptune Double.jpeg", "Relm XL.jpg", "Relm.jpg", "Verve.jpg", "Viridian WS.jpg", "Viridian.jpg"],
+
+                "Aruze":["APXMS.jpg", "CubeX APXUR 2.jpg", "CubeX APXUR.jpg", "Cubex Innovator Deluxe.jpeg", "CubeX Ultimate.jpg", "CubeX Vertical 40.jpg", "CubeX Vertical 80.jpg", "Genex WDOO.jpg", "Genex2 WDOO.jpeg",
+                "Muso Curve 43.jpg", "Muso LTD.jpg", "Muso Triple 27.jpg", "Roll To Win Craps.jpeg", "WDST MSOO 2.jpg", "WDST MSOO CRAPS.jpg"],
+
+                "Bally(Scientific Games)":["Alpha 2 Pro Stepper.jpg"/*, "Alpha 2 Pro V32 (2).jpg"*/, "Alpha 2 Pro V32.jpg", "Alpha 2 Prowave Wheel.jpeg", "Alpha 2 Prowave.jpg", "Alpha Jumbo V55.jpg",
+                "Alpha Pro V2727.jpg", "S9 Jumbo.jpg", "S9C.jpg", "S9E.jpg", "V20V32.jpeg", "V22V22.jpg", "V32.jpg", "V2222 Curve.jpg"/*, "V2232(2).jpg"*/, "V2232.jpg"],
+
+                "BluBeri":["BBKNIGHTSPOD.jpg", "Big Mech.jpeg", "Novus B49.jpeg"],
+
+                "Everi_Multimedia":["Empire 5527.jpg", "Empire Arena.jpg", "Empire Flex.jpeg", "Empire MPX.jpeg", "HDX 01.jpg", "Platinum MPX.jpg", "Player Classic Signature.jpg", "Skyline Revolve.jpeg", "Skyline.jpg",
+                "TSM01.jpg", "WBV 01.jpg"],
+
+                "Gaming Arts":["Phocus S104 Halotop.jpeg", "Phocus S104 Hybrid.jpeg", "VERTX Grand.jpeg"],
+
+                "IGT":["AVPTrimline.jpg", "Axxis 3D.jpg", "Cobalt.jpeg", "Crystal Curve Ultra 4D.jpg", "Crystal Curve Ultra.jpg", "Crystal Curve.jpg", "Crystal Dual 27.jpeg", "Crystal Dual LCD.jpg", "Crystal Reel.jpg",
+                "Crystal Slant.jpg", "Diamond RS.jpg", "G20 Bartop.jpg", "G22 Slant.jpg"/*, "G23 WS (2).jpg"*/, "G23 WS.jpg", "G23MLD V2.jpg", "GK Plus.jpg", "GMLD.jpg", "Megatower Universal.jpg", "Megatower.jpg", "Peakbar Top.jpeg",
+                "Peakslant 32.jpeg", "Peakslant 49.jpeg", "S2K (2).jpg", "S2K.jpg", "S3000 3RM.jpg", "S3000 5RM.jpeg", "S3000 XL.jpg"/*, "SAVP Traditional (2).jpg", "SAVP Traditional (3).jpg", "SAVP Traditional (4).jpg"*/, "SAVP Traditional Square Top.jpg",
+                "SAVP Traditional.jpg", "SMLD (Round Top).jpg", "SMLD (Square Top).jpg", "UNV LCD Slant.jpg", "UNV MLD Slant.jpg"],
+
+                "Incredible Technologies":["Infinity Skybox.jpg", "Infinity U23.jpg", "Infinity V55.jpg", "Prism VXP.jpeg"],
+
+                "Interblock":["G5 Roulette 2.jpg", "G5 Roulette.jpg", "Universal V1 ST.jpeg"],
+
+                "Konami":["Concerto Crescent.jpg", "Concerto.jpg", "Dimension 27.jpeg", "Dimension 49J.jpeg", "K2V.jpg", "KP3 Slant.jpg", "KX43.jpg", "Podium.jpg"],
+
+                "LightningGaming(IGT)":["Modulo 3232.jpg"],
+
+                "LnW (Bally, Scientific Games)":["Landmark 7000.jpg"],
+
+                "Novamatic":["FV834 VIP Lounge.jpg", "Panthera Curve.jpg"],
+
+                "Scientific Games":["Kascada Dual.jpeg", "Kascada K43.jpeg", "Mural.jpeg", "Twinstar 3RM.jpg"/*, "Twinstar J43 (2).jpg"*/, "Twinstar J43.jpg", "Twinstar Matrix.jpeg", "Twinstar Slant.jpg", "Twinstar Ultra 2424.jpeg",
+                "Twinstar V75.jpg", "Twinstar.jpg"],
+
+                "Sega Sammy":["Genesis Crest.jpeg"],
+
+                "WMS":["BBU1.jpg"/*, "BBU2 (2).jpg"*/, "BBU2.jpg", "BBU2e.jpeg", "Blade S23.jpg", "Blade S32.jpg", "Blade Stepper.jpg", "Blade.jpeg", "Gamescape.jpg"],
+
+                "Zitro":["Fusion Allure.jpeg", "Fusion Slant.jpeg"]}
+}

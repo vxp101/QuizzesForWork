@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+
+<img id="guy" alt="no image">
+
+<script>
+const manArray = ["./Man1.png", "./Man3.png"]
+
+function main(){
+	let scene = 0
+	let interval = setInterval(() => {scene += 1; if(scene > manArray.length - 1){scene = 0} document.getElementById("guy").src = manArray[scene]},100)
+
+}
+
+main()
+
+</script>
+
+</html>

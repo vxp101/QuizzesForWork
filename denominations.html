@@ -1,0 +1,437 @@
+/* Denomination
+
+0.01 Pink
+0.02 Brown
+0.03 Brown
+0.05 Red
+0.10 Green
+0.25 Yellow
+0.50 Orange
+1.00 Blue
+2.00 Blue
+5.00 Purple
+10.00 Green
+25.00 Orange
+100.00 White
+
+
+Instead of comparing strings like in Unlimited Mode. Find the number / name in the list of denominations / denomination_numbers and compare
+answers with the array of their corresponding dictionary info.
+*/
+
+
+<DOCTYPE html>
+
+
+
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Unlimited</title>
+<script src="./storage.jsonp">console.log(storage)</script>
+<script>
+
+
+
+document.body.innerHTML = `
+	<button id="menu" onclick={change_page("menu_page.html")}>&#8656; Menu </button>
+	<button id="ready_up" onclick={ready_up()}>Ready Up</button>
+<div id="game">
+<div id="background">
+
+</div>
+<div id="top_menu">
+	<h1 id="title"></h1>
+	<h2 id="timer">Timer: </h1>
+	<h2 id="highscore">Highscore: </h2>
+	<h2 id="score">Score: </h2>
+	
+	<button id="reset" onclick={reset_game()}>Reset</button>
+	<h3 id="question"></h3> 
+	<h3 id="answer_reveal">Correct Answer: </h3>
+	
+	<button id="next_button", type="button", onclick={update(false)}>Next</button>
+	<button id="submit", type="button", onclick={score_keeper()}>Submit</button>
+</div>
+
+	<div id="items">
+		
+		<div id='options'>              
+			                  
+		</div>
+	</div>
+</div>
+`
+
+/* MAKE A DOM ONLY FUNCTION */
+var styles = "@import url('./style.css')"
+var newSS = document.createElement('link')
+newSS.rel = "stylesheet"
+newSS.href = "./style.css"
+document.body.id = "main_scrn"
+document.getElementsByTagName("head")[0].appendChild(newSS)
+
+
+var denominations = {Pink: ["0.01"], Brown: ["0.02", "0.03"], Red: ["0.05"], Green: ["0.10", "10.00"], Yellow: ["0.25"], Orange: ["0.50", "25.00"], Blue: ["1.00", "2.00"], Purple: ["5.00"], White: ["100.00"]}
+var denomination_name_array = ["Pink", "Brown", "Red", "Green", "Yellow", "Orange", "Blue", "Purple", "White"]
+
+var denomination_numbers = {"0.01": "Pink", "0.02": "Brown", "0.03": "Brown", "0.05": "Red", "0.10": "Green", "10.00": "Green", "0.25": "Yellow", "0.50": "Orange", "25.00": "Orange", "1.00": "Blue", "2.00": "Blue", "2.00": "Blue", "5.00": "Purple", "100.00": "White"}
+var denomination_numbers_array = ["0.01", "0.02", "0.03", "0.05", "0.10", "0.25", "0.50", "1.00", "2.00", "5.00", "10.00", "25.00", "100.00"]
+
+var which_is_it = ["name", "number"]
+
+var score = 0;
+var milliseconds = 1000 /* 1 second */
+var max_seconds = null
+var timer = max_seconds
+var debounce = false
+
+
+var CurrentGuess = []
+var CurrentInputGuess = []
+var CorrectCabinet = []
+var GlobalCabinetDir
+var BackTracking = []
+var sortEGM = []
+		
+const VendorsFolder = "../Cabinet Identification/"
+// Create a function that switches between denomination name and denomination number
+
+function which_is_it_randomizer(){
+	
+	var random = Math.floor(Math.random() * 2)
+	
+	return which_is_it[random]
+}
+
+function reset_game(){
+	score = 0
+	timer = max_seconds
+	deselect_all_options()
+	document.getElementById("timer").innerText = "Timer: " + timer
+	document.getElementById("score").innerText = "Score: " + score
+
+	update()
+	
+}
+function random_question(which){
+	
+	if(which == "name"){
+		
+		var denom = Math.floor(Math.random()*(denomination_name_array.length))
+		var question = denominations[denomination_name_array[denom]]
+		var random = Math.floor(Math.random()*(question.length))
+		
+		CorrectCabinet.push(denomination_name_array[denom])
+		console.log(CorrectCabinet)
+		if(question.length > 1){
+			question = denominations[denomination_name_array[denom]][random]
+		}
+		else {
+			question = denominations[denomination_name_array[denom]][0]
+		}
+		
+		document.getElementById("question").innerText = question
+	}
+	
+	if(which == "number"){
+		
+		var denom = Math.floor(Math.random()*(denomination_numbers_array.length))
+		var question = denomination_numbers[denomination_numbers_array[denom]]
+		var random = Math.floor(Math.random()*(question.length))
+		
+		if(denominations[question].length > 1){
+			for(var i = 0; i < denominations[question].length;i++){
+				
+				CorrectCabinet.push(denominations[question][i])
+			}
+		}
+		else{
+			CorrectCabinet.push(denomination_numbers_array[denom])
+		}
+		
+		
+		document.getElementById("question").innerText = question
+	}
+	console.log(CorrectCabinet)
+
+}
+
+function denomination_guesses(which, gamestart){
+
+	document.getElementById("options").innerHTML = ""
+	var guess_number = 0
+	
+	if(which == "name"){
+		random_question(which)
+
+		for(var i=0; i < denomination_name_array.length; i++){
+		
+			
+			var guessId = "guess" + guess_number
+			guess_number++
+			
+			document.getElementById("options").innerHTML += `<input name="`+ guessId +`" class="guesses", id=` + guessId + ` type="checkbox"/><label style = "color: 'black'; visibility: hidden;", id="` + guessId + `label", class="guesseslabel" for=` + guessId + `>` + denomination_name_array[i] + `</label>`
+			
+		}
+		
+	}
+
+	if(which == "number"){
+		random_question(which)
+		for(var i=0; i < denomination_numbers_array.length; i++){
+		
+			
+			var guessId = "guess" + guess_number
+			guess_number++
+			
+			document.getElementById("options").innerHTML += `<input name="`+ guessId +`" class="guesses", id=` + guessId + ` type="checkbox"/><label style = "color: 'black'; visibility: hidden;", id="` + guessId + `label", class="guesseslabel" for=` + guessId + `>` + denomination_numbers_array[i] + `</label>`
+		
+		}
+		
+
+	}
+	
+	if(!gamestart){
+		ready_up()
+	}
+	document.querySelectorAll(".guesses").forEach((guess)=> guess.addEventListener("change", function (evt){
+		guess_selection(guess.id, guess.id + "label")
+		
+		}))
+	
+}
+
+function guess_selection(guess, guesslabel){
+
+	if(!CurrentGuess.includes(document.getElementById(guesslabel).innertext) && document.getElementById(guess).checked){
+		CurrentInputGuess.push(document.getElementById(guesslabel))
+                CurrentGuess.push(document.getElementById(guesslabel).innerText)
+
+		document.getElementById(guesslabel).style.color = "darkgray"    
+
+		document.getElementById("submit").disabled = false
+		console.log("GuessLabel: ", guesslabel, "CurrentInputGuess: ", CurrentInputGuess)
+
+	}
+	
+	else{
+		
+		document.getElementById(guesslabel).style.color = "black"
+		CurrentInputGuess.splice(CurrentInputGuess.indexOf(document.getElementById(guesslabel)), 1)
+                CurrentGuess.splice(CurrentGuess.indexOf(document.getElementById(guesslabel).innerText), 1)
+		
+		console.log(CurrentGuess, CurrentInputGuess)
+		
+	}
+		
+                
+
+}
+
+function score_keeper(gamestart){
+	
+
+	if(!gamestart){
+		document.querySelectorAll(".guesses").forEach((guess) => {guess.disabled = true})
+		document.getElementById("next_button").disabled = false
+                document.getElementById("submit").disabled = true
+			
+		var wrong = 0
+		
+		if(CurrentGuess.length < 1){
+				console.log("No Answer")
+		}
+
+		for(var i = 0; i < CurrentGuess.length; i++){
+			
+			if(CorrectCabinet.includes(CurrentGuess[i])){
+                		
+				CurrentInputGuess[i].style.color = "#00ff43"
+
+				document.getElementById("main_scrn").backgroundColor = "#62ff00"
+				document.getElementById("main_scrn").backgroundColor = "aqua"
+			}
+
+			if(!CorrectCabinet.includes(CurrentGuess[i])){
+                			
+				wrong += 1
+				CurrentInputGuess[i].style.color = "Red"
+
+				document.getElementById("main_scrn").backgroundColor = "#62ff00"
+				document.getElementById("main_scrn").backgroundColor = "aqua"
+			}
+		}
+			
+			
+		
+		if(wrong == 0){
+				score += 1
+		}
+	}
+
+	
+	document.getElementById("answer_reveal").innerText = "Correct Answer: " + CorrectCabinet
+	
+	
+
+
+
+	/*
+	since CorrectCabinet can be more than one, create a for loop to look at Correct cabinet and if all in CorrectCabinet == CurrentGuess then run first if. If one or both arent
+	loop through CurrentGuess and use .includes/.match to turn the corresponding red
+
+	CorrectCabinet comes back as undefined. I must make a rng for "cabinet" guesses
+	console.log(CurrentGuess)
+	if (CorrectCabinet == CurrentGuess){
+		score +=1
+                
+		CurrentInputGuess.style.color = "#00ff43"
+				
+			
+		
+                document.getElementById("answer_reveal").innerText = "Correct Cabinet: " + CorrectCabinet
+               
+                document.querySelectorAll(".guesses").forEach((guess) => {guess.disabled = true})
+                
+               
+		document.getElementById("main_scrn").backgroundColor = "#62ff00"
+		document.getElementById("main_scrn").backgroundColor = "aqua"
+	}
+
+	if (!gamestart && CorrectCabinet !== CurrentGuess){     
+		
+        	document.getElementById("answer_reveal").innerText = "Correct Cabinet: "+CorrectCabinet
+        	
+		CurrentInputGuess.style.color = "Red"
+       		
+       		
+		document.querySelectorAll("guesses").forEach((guess) => {guess.disabled = true})
+        	
+		document.body.color = "Red"
+		console.log(document.getElementById("main_scrn").backgroundColor)
+		setTimeout(function(){
+			document.getElementById("main_scrn").backgroundColor = "black"
+		}, 3000)
+		
+
+	}
+	*/
+	
+	document.getElementById("score").innerHTML = "Score: " + score
+	document.getElementById("next_button").disabled = false
+	document.getElementById("submit").disabled = true
+	deselect_all_options()
+}
+
+// this will update the DOM everytime anything in the DOM changes
+function update_dom(){
+	
+}
+
+function change_page(newPage){
+	window.location.href = newPage
+}
+
+function ready_up(){
+	
+	
+	document.getElementById("ready_up").style.visibility = "hidden"
+	const elements = document.querySelectorAll(":not(#ready_up):not(input):not(#highscore)")
+	elements.forEach((e) => {
+		e.style.visibility = "visible"
+	})
+	if(max_seconds == null){
+		document.getElementById("timer").style.visibility = "hidden"
+	}
+	document.getElementById("timer").innerText = "Timer: " + max_seconds
+	
+	var interval = setInterval(() => {
+	--timer
+	document.getElementById("timer").innerText = "Timer: " + timer
+	
+
+	if(timer == 0){
+		const elements = document.querySelectorAll(":not(#menu):not(#title):not(#score):not(#highscore):not(#reset)")
+		if(score > localStorage.getItem("Highscore")){
+			localStorage.setItem("Highscore", score)
+		}
+		document.getElementById("highscore").innerText = "Highscore: " + localStorage.getItem("Highscore")
+		document.getElementById("highscore").style.visibility = "visible"
+		document.getElementById("reset").style.visibility = "visible"
+		clearInterval(interval)
+		elements.forEach((e) => {
+			e.style.visibility = "hidden"})
+		
+		document.getElementById("score").style.animation = "end_game_slide 2s 1, end_game_pulse 2s 1"
+		document.getElementById("highscore").style.animation = "end_game_slide 2s 1, end_game_pulse 2s 1"
+	}
+	}, 1000)
+	
+}
+
+function reset_correct_answer(){
+	document.getElementById("answer_reveal").innerText = "Correct Answer: "
+}
+
+function enable_guess_buttons(){
+	document.querySelectorAll(".guesses").forEach((guess) => {guess.disabled = false})
+	
+}
+
+function deselect_all_options(currentguess){
+	document.querySelectorAll(".guesses").forEach((guess) => {guess.checked = false})
+	if (currentguess){
+		currentguess.checked = true 
+	}
+
+	
+}
+
+function enable_submit_button(){
+	document.getElementById("submit").disabled = false
+}
+
+
+function clear_button_css(){
+	var guesses = document.querySelectorAll(".guesseslabel")
+	guesses.forEach((guess) => {guess.style.color = "black"})
+	
+}
+
+function update(gamestart){
+	CurrentGuess = []
+	CurrentInputGuess = []
+	CorrectCabinet = []
+	denomination_guesses(which_is_it_randomizer(), gamestart)
+	reset_correct_answer()
+	enable_guess_buttons()
+	clear_button_css()
+	enable_submit_button()
+	//score_keeper(gamestart)
+	update_dom()
+	document.getElementById("next_button").disabled = true
+	document.getElementById("submit").disabled = true
+	document.getElementById("menu").style.visibility = "visible"
+	
+}
+
+
+function main(){
+
+	update(true)
+	
+	update_dom()
+	
+
+}
+
+main()
+
+</script>
+</head>
+
+<body>
+</body>
+</html>

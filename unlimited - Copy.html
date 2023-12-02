@@ -1,0 +1,310 @@
+<DOCTYPE html>
+
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Speed Run</title>
+<script src="./storage.jsonp">console.log(storage)</script>
+<script>
+document.body.innerHTML = `
+	<button id="menu" onclick={change_page("menu_page.html")}>&#8656; Menu </button>
+	<button id="ready_up" onclick={ready_up()}>Ready Up</button>
+<div id="game">
+<div id="background">
+
+</div>
+<div id="top_menu">
+	<h1 id="title"> Speed Run </h1>
+	<h2 id="timer">Timer: </h1>
+	<h2 id="highscore">Highscore: </h2>
+	<h2 id="score">Score: </h2>
+	<button id="reset" onclick={ready_up()}>Reset</button>
+	<h3 id="answer_reveal">Correct Cabinet: </h3>
+
+	<button id="next_button", type="button", onclick={update()}>Next</button>
+	<button id="submit", type="button", onclick={score_keeper()}>Submit</button>
+</div>
+
+	<div id="items">
+		<img id="cabinetImage", alt="No Image", href={}/>
+		<div id='options'>              
+			<div>
+                    		<input name="radio" class="guesses", id="guess1", type="radio"/><label id="guess1label", for="guess1"></label>
+				<input name="radio"  class="guesses", id="guess2", type="radio"/><label id="guess2label", for="guess2"></label>
+			</div>
+			<div>
+                      		<input name="radio"  class="guesses", id="guess3", type="radio"/><label id="guess3label", for="guess3"></label>
+				<input name="radio"  class="guesses", id="guess4", type="radio"/><label id="guess4label", for="guess4"></label>
+			</div>                      
+		</div>
+	</div>
+</div>
+`
+
+
+var styles = "@import url('./style.css')"
+var newSS = document.createElement('link')
+newSS.rel = "stylesheet"
+newSS.href = "./style.css"
+document.body.id = "main_scrn"
+document.getElementsByTagName("head")[0].appendChild(newSS)
+
+	var score = 0;
+	var milliseconds = 1000 /* 1 second */
+	var max_seconds = 120
+	
+            var CurrentGuess
+            var CurrentInputGuess
+            var CorrectCabinet
+            var GlobalCabinetDir
+            var BackTracking = []
+
+            const guess1 = document.getElementById("guess1")
+            const guess1label = document.getElementById("guess1label")
+            const guess2 = document.getElementById("guess2")
+            const guess2label = document.getElementById("guess2label")
+            const guess3 = document.getElementById("guess3")
+            const guess3label = document.getElementById("guess3label")
+            const guess4 = document.getElementById("guess4")
+            const guess4label = document.getElementById("guess4label")
+            const labelArray = [guess1label, guess2label, guess3label, guess4label]
+            const VendorsFolder = "../Cabinet Identification/"
+if(!localStorage.getItem("Highscore")){
+	localStorage.setItem("Highscore", 0)
+}
+
+function change_page(newPage){
+	window.location.href = newPage
+}
+
+function ready_up(){
+
+	document.getElementById("ready_up").style.visibility = "hidden"
+	const elements = document.querySelectorAll(":not(#ready_up):not(input):not(#highscore)")
+	elements.forEach((e) => {
+		e.style.visibility = "visible"
+	})
+
+	document.getElementById("timer").innerText = "Timer: " + max_seconds
+	var timer = max_seconds
+	var interval = setInterval(() => {
+	--timer
+	document.getElementById("timer").innerText = "Timer: " + timer
+	
+
+	if(timer == 0){
+		const elements = document.querySelectorAll(":not(#menu):not(#title):not(#score):not(#highscore):not(#reset)")
+		if(score > localStorage.getItem("Highscore")){
+			localStorage.setItem("Highscore", score)
+		}
+		document.getElementById("highscore").innerText = "Highscore: " + localStorage.getItem("Highscore")
+		document.getElementById("highscore").style.visibility = "visible"
+		document.getElementById("reset").style.visibility = "visible"
+		clearInterval(interval)
+		elements.forEach((e) => {
+			e.style.visibility = "hidden"})
+		
+		document.getElementById("score").style.animation = "end_game_slide 2s 1, end_game_pulse 2s 1"
+		document.getElementById("highscore").style.animation = "end_game_slide 2s 1, end_game_pulse 2s 1"
+	}
+	}, 1000)
+
+}
+
+
+
+
+function guess_selection(guess, guesslabel){
+		if(guess.checked){
+			labelArray.forEach((item) => {item.style.color = "black"})
+			guesslabel.style.color = "darkgray"                                       
+		}
+
+		else{guesslabel.style.color = "black"}
+		
+                CurrentInputGuess = guesslabel
+                CurrentGuess = guesslabel.innerText
+		document.getElementById("submit").disabled = false
+
+}
+
+document.getElementById("guess1").addEventListener("change", function (evt){
+	guess_selection(guess1, guess1label)                               
+})
+     
+
+document.getElementById("guess2").addEventListener("change", function (evt){
+	guess_selection(guess2, guess2label)
+})
+
+document.getElementById("guess3").addEventListener("change", function (evt){
+	guess_selection(guess3, guess3label)
+})
+
+document.getElementById("guess4").addEventListener("change", function (evt){
+	guess_selection(guess4, guess4label)
+})
+
+function choices_dom(option1, option2, option3, correct){
+	var RandomGuesses = [option1, option2, option3, correct]
+	return RandomGuesses
+}
+
+function random_number(){
+	return Math.floor(Math.random() * 4)
+}
+
+function random_guesses(){
+	BackTracking = []
+	choices = choices_dom(random_option(), random_option(), random_option(), correct_guess_dom())
+
+	for (i = 0; i < 4; i++){
+		console.log("Ran RandomGuesses")
+		BackTracking.splice(random_number(), 0, choices[i])
+	}
+}
+
+function score_keeper(gamestart){
+	if (CorrectCabinet == CurrentGuess){
+		score +=1
+                console.log(CurrentInputGuess)
+		CurrentInputGuess.style.color = "#00ff43"
+                document.getElementById("answer_reveal").innerText = "Correct Cabinet: "+CorrectCabinet
+                document.getElementById("submit").disabled = true
+                guess1.disabled = true
+                guess2.disabled = true
+                guess3.disabled = true
+                guess4.disabled = true
+                document.getElementById("next_button").disabled = false
+		document.getElementById("main_scrn").backgroundColor = "#62ff00"
+		document.getElementById("main_scrn").backgroundColor = "aqua"
+	}
+
+	if (!gamestart && CorrectCabinet !== CurrentGuess){            
+        	document.getElementById("answer_reveal").innerText = "Correct Cabinet: "+CorrectCabinet
+        	CurrentInputGuess.style.color = "Red"
+       		document.getElementById("submit").disabled = true
+       		guess1.disabled = true
+        	guess2.disabled = true
+        	guess3.disabled = true
+        	guess4.disabled = true
+        	document.getElementById("next_button").disabled = false
+		document.body.color = "Red"
+		console.log(document.getElementById("main_scrn").backgroundColor)
+		setTimeout(function(){
+			document.getElementById("main_scrn").backgroundColor = "black"
+		}, 3000)
+		
+
+	}
+	document.getElementById("score").innerHTML = "Score: " + score
+
+	deselect_all_options()
+}
+
+function random_vendor(){
+	var rng = Math.random() * storage.VendorList.length
+        var VendorRng = Math.floor(rng)
+        var vendor = storage.VendorList[VendorRng]
+	return vendor
+}
+
+function correct_guess_dom(){
+        console.log(CorrectCabinet, " correct_guess_dom")
+	return CorrectCabinet/*`<input id={CorrectCabinet}, type="checkbox", value={CorrectCabinet}/><label for={CorrectCabinet}>${CorrectCabinet}</label> `*/
+}
+
+function random_cabinet(doDom){
+        var RandomVendor = random_vendor()
+        var CabinetRng = Math.floor(Math.random() * storage.VendorDictionary[RandomVendor].length)
+        var CabinetFolder = storage.VendorDictionary[RandomVendor][CabinetRng]
+        var cabinetDir = VendorsFolder + RandomVendor + "/" + CabinetFolder
+        var cabinet = cabinetDir.split("/")[3].split(".")[0]
+	var itemsHTML = document.getElementById("items")
+
+        if (doDom == "true"){
+                CorrectCabinet = cabinet
+                GlobalCabinetDir = cabinetDir
+                console.log(CorrectCabinet, "Correct Cabinet")
+		document.getElementById("cabinetImage").src = cabinetDir
+		itemsHTML.backgroundImage = `url(${GlobalCabinetDir})`
+		console.log(itemsHTML.style.backgroundImage)
+		console.log(itemsHTML)
+        }
+	return cabinet
+}
+
+function random_option(){
+        var RandomCabinet = random_cabinet()
+        /*This is going to go bye bye. Make a for loop for all the inputs in*/ /* var RandomCabinetDom = `<input id={RandomCabinet}, type="checkbox", value={RandomCabinet} /> <label for={RandomCabinet}>${RandomCabinet}</label>`*/
+	return RandomCabinet
+}
+
+function random_option_dom(){
+	/*document.getElementById('options').innerHTML = `${BackTracking[0]}${BackTracking[1]}${BackTracking[2]}${BackTracking[3]}`*/
+	document.getElementById("guess1label").innerHTML = BackTracking[0]
+	document.getElementById("guess2label").innerHTML = BackTracking[1]
+	document.getElementById("guess3label").innerHTML = BackTracking[2]
+	document.getElementById("guess4label").innerHTML = BackTracking[3]
+
+}
+
+function enable_submit_button(){
+	document.getElementById("submit").disabled = false
+}
+
+function clear_button_css(){
+	guess1label.style.color = "black"
+	guess2label.style.color = "black"
+	guess3label.style.color = "black"
+	guess4label.style.color = "black"
+}
+
+function deselect_all_options(){
+	guess1.checked = false
+	guess2.checked = false
+	guess3.checked = false
+	guess4.checked = false
+}
+
+function enable_guess_buttons(){
+	guess1.disabled = false
+	guess2.disabled = false
+	guess3.disabled = false
+	guess4.disabled = false
+}
+
+function reset_correct_answer(){
+	document.getElementById("answer_reveal").innerText = "Correct Cabinet: "
+}
+
+function update(){
+	reset_correct_answer()
+	enable_guess_buttons()
+	clear_button_css()
+	enable_submit_button()
+	random_cabinet("true")
+	random_guesses()
+	random_option_dom()
+	document.getElementById("next_button").disabled = true
+	document.getElementById("submit").disabled = true
+	CurrentInputGuess = ""
+	
+}
+
+ 
+function main(){
+	update()
+	/* true is telling the game this is the initial start of the game */				
+	score_keeper(true)
+}
+
+main()
+
+</script>
+</head>
+
+<body>
+</body>
+</html>

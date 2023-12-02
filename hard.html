@@ -1,0 +1,380 @@
+<DOCTYPE html>
+
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Hard</title>
+<script src="./storage.jsonp">console.log(storage)</script>
+<script>
+document.body.innerHTML = `
+	<button id="menu" onclick={change_page("menu_page.html")}>&#8656; Menu </button>
+	<button id="ready_up" onclick={ready_up()}>Ready Up</button>
+<div id="game">
+<div id="background">
+
+</div>
+<div id="top_menu">
+	<h1 id="title"> Hard </h1>
+	<h2 id="timer">Timer: </h1>
+	<h2 id="highscore">Highscore: </h2>
+	<h2 id="score">Score: </h2>
+	<button id="reset" onclick={reset_game()}>Reset</button>
+	<h3 id="answer_reveal">Correct Cabinet: </h3>
+
+	<button id="next_button", type="button", onclick={update()}>Next</button>
+	<button id="submit", type="button", onclick={score_keeper()}>Submit</button>
+</div>
+
+	<div id="items" style="display: flex;">
+		<img id="cabinetImage", alt="No Image", href={}/>
+		<div id="games">
+			<div id="search">
+				<b><label style="font-size: 20px; background-color: black; color: white; width: 1px;", for="search"> Search</label></b>
+				<input type="text", id="search" , class="search", placeholder="insert game to search", name="search"/>
+			</div>
+			<div id='options' style="width: 300px; height: 200px; overflow: auto;">              
+                    			
+				                   
+			</div>
+		</div>
+
+	</div>
+</div>
+`
+
+/* MAKE A DOM ONLY FUNCTION */
+var styles = "@import url('./style.css')"
+var newSS = document.createElement('link')
+newSS.rel = "stylesheet"
+newSS.href = "./style.css"
+document.body.id = "main_scrn"
+document.getElementsByTagName("head")[0].appendChild(newSS)
+	
+	var score = 0;
+	var milliseconds = 1000 /* 1 second */
+	var max_seconds = null
+	var timer = max_seconds
+	var debounce = false
+
+        var CurrentGuess
+        var CurrentInputGuess
+        var CorrectCabinet
+        var GlobalCabinetDir
+        var BackTracking = []
+	var sortEGM = []
+		
+        const VendorsFolder = "../Cabinet Identification/"
+
+for(var i=0; i < storage.VendorList.length  ;i++){
+		for(var j=0; j < storage.VendorDictionary[storage.VendorList[i]].length ; j++){
+			
+			sortEGM.push(storage.VendorDictionary[storage.VendorList[i]][j])
+
+		}
+	}
+sortEGM.sort()
+
+/* Takes a long time to load after input because of adding an eventlistener every letter*/
+document.getElementById("search").addEventListener("input", function(evt){
+	document.getElementById("options").innerHTML = ""
+	var guess_number = 0
+	for(var i=0; sortEGM.length - 1; i++){
+		
+		
+		
+		
+		if(sortEGM[i].toLowerCase().includes(evt.target.value)){
+			
+			var guessId = "guess" + guess_number
+			guess_number++
+			
+			document.getElementById("options").innerHTML += `<input name="`+ guessId +`" class="guesses", id=` + guessId + ` type="radio"/><label style = "color: 'black'; visibility: visible;", id="` + guessId + `label", class="guesseslabel" for=` + guessId + `>` + sortEGM[i].split(".")[0] + `</label>`
+			/*document.querySelectorAll(".guesses").forEach((guess)=> guess.addEventListener("change", function (evt){
+				guess_selection(guess.id, guess.id + "label")
+		
+		
+			
+			
+			
+			}))*/
+	}
+	document.querySelectorAll(".guesses").forEach((guess)=> guess.addEventListener("change", function (evt){
+				guess_selection(guess.id, guess.id + "label")
+		
+		
+			
+			
+			
+			}))
+}})
+
+
+
+if(!localStorage.getItem("Highscore")){
+	localStorage.setItem("Highscore", 0)
+}
+
+
+function fillNotPlayedCabinets(){
+
+	storage.VendorList.forEach(function(vendor) {storage.VendorDictionary[vendor].forEach(function(cabinet){ notPlayedCabinets.push(cabinet);})})
+	
+	return notPlayedCabinets
+}
+
+function change_page(newPage){
+	window.location.href = newPage
+}
+
+function reset_game(){
+	if(timer == 0){
+		ready_up()
+	}
+	score = 0
+	timer = max_seconds
+	deselect_all_options()
+	document.getElementById("timer").innerText = "Timer: " + timer
+	document.getElementById("score").innerText = "Score: " + score
+
+	
+}
+function search(item, bool){
+	if(bool){
+		console.log(document.getElementById("search"))
+		
+	}
+}
+function ready_up(){
+	
+
+	document.getElementById("ready_up").style.visibility = "hidden"
+	const elements = document.querySelectorAll(":not(#ready_up):not(.guesses):not(#highscore)")
+	elements.forEach((e) => {
+		e.style.visibility = "visible"
+	})
+	if(max_seconds == null){
+		document.getElementById("timer").style.visibility = "hidden"
+	}
+	document.getElementById("timer").innerText = "Timer: " + max_seconds
+	
+	var interval = setInterval(() => {
+	--timer
+	document.getElementById("timer").innerText = "Timer: " + timer
+	
+
+	if(timer == 0){
+		const elements = document.querySelectorAll(":not(#menu):not(#title):not(#score):not(#highscore):not(#reset)")
+		if(score > localStorage.getItem("Highscore")){
+			localStorage.setItem("Highscore", score)
+		}
+		document.getElementById("highscore").innerText = "Highscore: " + localStorage.getItem("Highscore")
+		document.getElementById("highscore").style.visibility = "visible"
+		document.getElementById("reset").style.visibility = "visible"
+		clearInterval(interval)
+		elements.forEach((e) => {
+			e.style.visibility = "hidden"})
+		
+		document.getElementById("score").style.animation = "end_game_slide 2s 1, end_game_pulse 2s 1"
+		document.getElementById("highscore").style.animation = "end_game_slide 2s 1, end_game_pulse 2s 1"
+	}
+	}, 1000)
+	
+}
+	
+
+
+
+
+function guess_selection(guess, guesslabel){
+		CurrentInputGuess = document.getElementById(guesslabel)
+                CurrentGuess = document.getElementById(guesslabel).innerText
+		document.getElementById("submit").disabled = false
+		console.log(guesslabel)
+		if(document.getElementById(guess).checked){
+			
+			document.querySelectorAll(".guesseslabel").forEach((item) => {if(item.innerText != guesslabel.innertext){item.style.color = "black"}})
+			deselect_all_options(CurrentInputGuess)
+			document.getElementById(guesslabel).style.color = "darkgray"                                       
+		}
+
+		else{document.getElementById(guesslabel).style.color = "black"}
+		
+                
+
+}
+
+function random_vendor(){
+	var rng = Math.random() * storage.VendorList.length
+        var VendorRng = Math.floor(rng)
+        var vendor = storage.VendorList[VendorRng]
+	return vendor
+}
+
+function random_cabinet(doDom){
+        var RandomVendor = random_vendor()
+        var CabinetRng = Math.floor(Math.random() * storage.VendorDictionary[RandomVendor].length)
+        var CabinetFolder = storage.VendorDictionary[RandomVendor][CabinetRng]
+        var cabinetDir = VendorsFolder + RandomVendor + "/" + CabinetFolder
+        var cabinet = cabinetDir.split("/")[3].split(".")[0]
+	var itemsHTML = document.getElementById("items")
+
+        if (doDom == "true"){
+                CorrectCabinet = cabinet
+                GlobalCabinetDir = cabinetDir
+                console.log(CorrectCabinet, "Correct Cabinet")
+		document.getElementById("cabinetImage").src = cabinetDir
+		itemsHTML.backgroundImage = `url(${GlobalCabinetDir})`
+		console.log(itemsHTML.style.backgroundImage)
+		console.log(itemsHTML)
+        }
+	return cabinet
+}
+
+function random_option(){
+        var RandomCabinet = random_cabinet()
+        /*This is going to go bye bye. Make a for loop for all the inputs in*/ /* var RandomCabinetDom = `<input id={RandomCabinet}, type="checkbox", value={RandomCabinet} /> <label for={RandomCabinet}>${RandomCabinet}</label>`*/
+	return RandomCabinet
+}
+
+
+function guess_list(item, bool){
+
+if(bool == "true"){
+	
+		var guess_number = 0
+	
+		document.getElementById("options").innerHTML = ""
+
+		for(var i=0; i < sortEGM.length - 1;i++){
+			var guessId = "guess" + guess_number
+			guess_number++
+			
+			document.getElementById("options").innerHTML += `<input name="`+ guessId +`" class="guesses", id=` + guessId + ` type="radio"/><label style = "color: 'black';", id="` + guessId + `label", class="guesseslabel" for=` + guessId + `>` + sortEGM[i].split(".")[0] + `</label>`
+
+			document.querySelectorAll(".guesses").forEach((guess)=> guess.addEventListener("change", function (evt){
+				console.log(guess.id+"label")
+				guess_selection(guess.id, guess.id + "label")	}))
+		
+		
+		
+	}
+	
+	console.log(guess_number + " " + sortEGM.length )
+
+/*else{
+	document.getElementById("search").addEventListener("input", function(){
+	
+}
+*/
+	
+	
+
+}}
+
+document.getElementById("search").addEventListener("input", function(evt){
+	guess_list(evt.target.value)
+})
+
+function score_keeper(gamestart){
+	if (CorrectCabinet == CurrentGuess && !gamestart){
+		score +=1
+                
+		CurrentInputGuess.style.color = "#00ff43"
+                /*document.getElementById("answer_reveal").innerText = "Correct Cabinet: " + CorrectCabinet*/
+                document.getElementById("submit").disabled = true
+                document.querySelectorAll(".guesses").forEach((guess) => {guess.disabled = true})
+                
+                document.getElementById("next_button").disabled = false
+		document.getElementById("main_scrn").backgroundColor = "#62ff00"
+		document.getElementById("main_scrn").backgroundColor = "aqua"
+	}
+
+	if (!gamestart && CorrectCabinet !== CurrentGuess){     
+		
+        	document.getElementById("answer_reveal").innerText = "Correct Cabinet: "+CorrectCabinet
+        	CurrentInputGuess.style.color = "Red"
+       		document.getElementById("submit").disabled = true
+       		
+		document.querySelectorAll("guesses").forEach((guess) => {guess.disabled = true})
+        	document.getElementById("next_button").disabled = false
+		document.body.color = "Red"
+		console.log(document.getElementById("main_scrn").backgroundColor)
+		setTimeout(function(){
+			document.getElementById("main_scrn").backgroundColor = "black"
+		}, 3000)
+		
+
+	}
+	document.getElementById("score").innerHTML = "Score: " + score
+
+	deselect_all_options()
+}
+
+function correct_guess_dom(){
+        console.log(CorrectCabinet, " correct_guess_dom")
+	return CorrectCabinet/*`<input id={CorrectCabinet}, type="checkbox", value={CorrectCabinet}/><label for={CorrectCabinet}>${CorrectCabinet}</label> `*/
+}
+
+
+function enable_submit_button(){
+	document.getElementById("submit").disabled = false
+}
+
+function clear_button_css(){
+	var guesses = document.querySelectorAll(".guesseslabel")
+	guesses.forEach((guess) => {guess.style.color = "black"})
+	
+}
+
+function deselect_all_options(currentguess){
+	document.querySelectorAll(".guesses").forEach((guess) => {guess.checked = false})
+	if (currentguess){
+		currentguess.checked = true 
+	}
+
+	
+}
+
+function enable_guess_buttons(){
+	document.querySelectorAll(".guesses").forEach((guess) => {guess.disabled = false})
+	
+}
+
+function reset_correct_answer(){
+	document.getElementById("answer_reveal").innerText = "Correct Cabinet: "
+}
+
+
+function update(listbool){
+	guess_list(0, listbool)
+	reset_correct_answer()
+	enable_guess_buttons()
+	clear_button_css()
+	enable_submit_button()
+
+	random_cabinet("true")
+	document.getElementById("next_button").disabled = true
+	document.getElementById("submit").disabled = true
+	document.getElementById("menu").style.visibility = "visible"
+	CurrentInputGuess = 1
+	
+}
+
+
+function main(){
+	fillNotPlayedCabinets()
+
+	update("true")
+	/* true is telling the game this is the initial start of the game */				
+	score_keeper(true)
+}
+
+main()
+
+</script>
+</head>
+
+<body>
+</body>
+</html>
