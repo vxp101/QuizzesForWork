@@ -1,0 +1,49 @@
+<DOCTYPE html>
+
+<head>
+</head>
+<title>Menu</title>
+<h1> Menu </h1>
+
+<style>
+	
+	h1{
+		text-align: center;
+	}
+	body{	
+		color: white;
+		background-color: Black;
+		
+	
+	}
+	button {
+		height: 50px;
+		width: 200px;
+	}
+
+</style>
+
+<body>
+<div id="buttons">
+	<button onclick={change_page("unlimited.html")}>Unlimited</button>
+	<button onclick={change_page("speed_run_page.html")}>Speed Run</button>
+	<button onclick={change_page("hard.html")}>Hard</button>
+	<button onclick={change_page("")}>Super Hard</button>
+	<button onclick={change_page("denominations.html")}>Denomination Game</button>
+	<button onclick={change_page("")}>Currently Unknown</button>
+
+
+</div>
+<script>
+
+	function change_page(newPage){
+		window.location.href = newPage
+	}
+	
+	
+</script>
+
+
+</body>
+
+</html>
