@@ -1,0 +1,6 @@
+storage = {
+	VendorList : ["AGS"],
+        VendorDictionary : {
+                "AGS":["Starry_Night.jpg", "Portrait.jpg", "House_Party.jpg", "Skiing.jpg"],
+		}
+}
