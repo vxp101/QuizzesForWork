@@ -4,27 +4,24 @@
 
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Unlimited</title>
+<title>Speed Run</title>
 <script src="./storage.jsonp">console.log(storage)</script>
 <script>
 document.body.innerHTML = `
 	<button id="menu" onclick={change_page("menu_page.html")}>&#8656; Menu </button>
 	<button id="ready_up" onclick={ready_up()}>Ready Up</button>
-
-
-<div id="top_menu">
-	<h1 id="title"> Unlimited </h1>
-	
-	<h3 id="answer_reveal">Correct Cabinet: </h3>
-</div>
 <div id="game">
 <div id="background">
 
 </div>
-
-<div id="SideText">
+<div id="top_menu">
+	<h1 id="title"> Speed Run </h1>
+	<h2 id="timer">Timer: </h1>
+	<h2 id="highscore">Highscore: </h2>
 	<h2 id="score">Score: </h2>
 	<button id="reset" onclick={reset_game()}>Reset</button>
+	<h3 id="answer_reveal">Correct Cabinet: </h3>
+
 	
 </div>
 
@@ -38,13 +35,12 @@ document.body.innerHTML = `
 			<div>
                       		<input name="radio"  class="guesses", id="guess3", type="radio"/><label id="guess3label", for="guess3"></label>
 				<input name="radio"  class="guesses", id="guess4", type="radio"/><label id="guess4label", for="guess4"></label>
-			</div> 
-			<div id="buttons">
+			</div>  
+			<div>
 				<button id="next_button", type="button", onclick={update()}>Next</button>
-				<button id="submit", type="button", onclick={score_keeper()}>Submit</button>
-			</div>                    
+				<button id="submit", type="button", onclick={score_keeper()}>Submit</button>  
+			</div>                 
 		</div>
-		
 	</div>
 </div>
 `
@@ -59,42 +55,29 @@ document.getElementsByTagName("head")[0].appendChild(newSS)
 	
 	var score = 0;
 	var milliseconds = 1000 /* 1 second */
-	var max_seconds = 0
-	var timer = null
+	var max_seconds = 120
+	var timer = max_seconds
 	var debounce = false
 
-        var CurrentGuess
-        var CurrentInputGuess
-        var CorrectCabinet
-        var GlobalCabinetDir
-        var BackTracking = []
-	var playedCabinets = []
-	var notPlayedCabinets = []
-	var options = []
-        const guess1 = document.getElementById("guess1")
-        const guess1label = document.getElementById("guess1label")
-        const guess2 = document.getElementById("guess2")
-        const guess2label = document.getElementById("guess2label")
-        const guess3 = document.getElementById("guess3")
-        const guess3label = document.getElementById("guess3label")
-        const guess4 = document.getElementById("guess4")
-        const guess4label = document.getElementById("guess4label")
-        const labelArray = [guess1label, guess2label, guess3label, guess4label]
-        const VendorsFolder = "./Cabinet Identification/"
-
-/* fill options with non duplicate guesses. Replace old options */
+            var CurrentGuess
+            var CurrentInputGuess
+            var CorrectCabinet
+            var GlobalCabinetDir
+            var BackTracking = []
+		
+            const guess1 = document.getElementById("guess1")
+            const guess1label = document.getElementById("guess1label")
+            const guess2 = document.getElementById("guess2")
+            const guess2label = document.getElementById("guess2label")
+            const guess3 = document.getElementById("guess3")
+            const guess3label = document.getElementById("guess3label")
+            const guess4 = document.getElementById("guess4")
+            const guess4label = document.getElementById("guess4label")
+            const labelArray = [guess1label, guess2label, guess3label, guess4label]
+            const VendorsFolder = "../Cabinet Identification/"
 if(!localStorage.getItem("Highscore")){
 	localStorage.setItem("Highscore", 0)
 }
-
-
-function fillNotPlayedCabinets(){
-
-	storage.VendorList.forEach(function(vendor) {storage.VendorDictionary[vendor].forEach(function(cabinet){ notPlayedCabinets.push(cabinet);})})
-	
-	return notPlayedCabinets
-}
-
 
 function change_page(newPage){
 	window.location.href = newPage
@@ -113,14 +96,6 @@ function reset_game(){
 
 	
 }
-
-function timer(){
-	
-}
-
-function timer_dom(){
-	
-}
 function ready_up(){
 	
 
@@ -129,55 +104,45 @@ function ready_up(){
 	elements.forEach((e) => {
 		e.style.visibility = "visible"
 	})
-	
-	if(max_seconds == null){
-		document.getElementById("timer").style.visibility = "hidden"
-	}
-	
+
 	document.getElementById("timer").innerText = "Timer: " + max_seconds
+	
 	var interval = setInterval(() => {
-		document.getElementById("timer").innerText = "Timer: " + timer
+	--timer
+	document.getElementById("timer").innerText = "Timer: " + timer
 	
 
-		if(timer == 0){
-			const elements = document.querySelectorAll(":not(#menu):not(#title):not(#score):not(#highscore):not(#reset)")
-			if(score > localStorage.getItem("Highscore")){
-				localStorage.setItem("Highscore", score)
-			}
-			document.getElementById("highscore").innerText = "Highscore: " + localStorage.getItem("Highscore")
-			document.getElementById("highscore").style.visibility = "visible"
-			document.getElementById("reset").style.visibility = "visible"
-			clearInterval(interval)
-			elements.forEach((e) => {
-				e.style.visibility = "hidden"})
-		
-			document.getElementById("score").style.animation = "end_game_slide 2s 1, end_game_pulse 2s 1"
-			document.getElementById("highscore").style.animation = "end_game_slide 2s 1, end_game_pulse 2s 1"
+	if(timer == 0){
+		const elements = document.querySelectorAll(":not(#menu):not(#title):not(#score):not(#highscore):not(#reset)")
+		if(score > localStorage.getItem("Highscore")){
+			localStorage.setItem("Highscore", score)
 		}
-
-	}, 1000)
-
-	
-	
-}
-	
-
-
-function change_guess_color(guess, guesslabel){
-	if(guess.checked){
-			labelArray.forEach((item) => {item.style.color = "black"})
-			guesslabel.style.color = "darkgray"                                       
-	}
-
-	else{guesslabel.style.color = "black"}
+		document.getElementById("highscore").innerText = "Highscore: " + localStorage.getItem("Highscore")
+		document.getElementById("highscore").style.visibility = "visible"
+		document.getElementById("reset").style.visibility = "visible"
+		clearInterval(interval)
+		elements.forEach((e) => {
+			e.style.visibility = "hidden"})
 		
+		document.getElementById("score").style.animation = "end_game_slide 2s 1, end_game_pulse 2s 1"
+		document.getElementById("highscore").style.animation = "end_game_slide 2s 1, end_game_pulse 2s 1"
+	}
+	}, 1000)
+	
 }
+	
+
+
 
 
 function guess_selection(guess, guesslabel){
-		
-		change_guess_color(guess, guesslabel)
+		if(guess.checked){
+			labelArray.forEach((item) => {item.style.color = "black"})
+			guesslabel.style.color = "darkgray"                                       
+		}
 
+		else{guesslabel.style.color = "black"}
+		
                 CurrentInputGuess = guesslabel
                 CurrentGuess = guesslabel.innerText
 		document.getElementById("submit").disabled = false
@@ -185,7 +150,7 @@ function guess_selection(guess, guesslabel){
 }
 
 document.getElementById("guess1").addEventListener("change", function (evt){
-	guess_selection(guess1, guess1label)                        
+	guess_selection(guess1, guess1label)                               
 })
      
 
@@ -210,52 +175,13 @@ function random_number(){
 	return Math.floor(Math.random() * 4)
 }
 
-function check_for_duplicates(backtracking){
-	for(i = 0; i < backtracking.length; i++){
-		OccurenceCount = 0
-		for(x = 0; x < backtracking.length; x++){
-			if(backtracking[i] == backtracking[x]){
-				OccurenceCount++
-				console.log(OccurenceCount, " ", backtracking[x])
-				if(OccurenceCount > 1){
-					
-					random_guesses()
-				}
-			}
-		}
-		
-	}
-}
-function random_guesses(bool){
-	
+function random_guesses(){
 	BackTracking = []
-	/* what would happen if i put choices inside random_option(choices) */
-	
-	var choices = choices_dom(random_option(), random_option(), random_option(), correct_guess_dom())
-	
+	choices = choices_dom(random_option(), random_option(), random_option(), correct_guess_dom())
+
 	for (i = 0; i < 4; i++){
-		
+		console.log("Ran RandomGuesses")
 		BackTracking.splice(random_number(), 0, choices[i])
-		
-	}
-	check_for_duplicates(BackTracking)
-}
-
-function enable_disable_guess(guess, guess1, guess2, guess3, guess4){
-	
-	if(guess){
-		
-		guess1.disabled = false
-		guess2.disabled = false
-		guess3.disabled = false
-		guess4.disabled = false
-
-	}
-	else{
-		guess1.disabled = true
-        	guess2.disabled = true
-        	guess3.disabled = true
-        	guess4.disabled = true
 	}
 }
 
@@ -266,28 +192,34 @@ function score_keeper(gamestart){
 		CurrentInputGuess.style.color = "#00ff43"
                 /*document.getElementById("answer_reveal").innerText = "Correct Cabinet: "+CorrectCabinet*/
                 document.getElementById("submit").disabled = true
-                enable_disable_guess(false, guess1, guess2, guess3, guess4)
+                document.querySelectorAll("guesses").forEach((guess) => {guess.disabled = true})
+                
                 document.getElementById("next_button").disabled = false
-		/*document.getElementById("main_scrn").backgroundColor = "#62ff00"*/
-		/*document.getElementById("main_scrn").backgroundColor = "aqua"*/
+		document.getElementById("main_scrn").backgroundColor = "#62ff00"
+		document.getElementById("main_scrn").backgroundColor = "aqua"
 	}
 
 	if (!gamestart && CorrectCabinet !== CurrentGuess){            
         	document.getElementById("answer_reveal").innerText = "Correct Cabinet: "+CorrectCabinet
         	CurrentInputGuess.style.color = "Red"
        		document.getElementById("submit").disabled = true
-       		enable_disable_guess(false, guess1, guess2, guess3, guess4)
+       		guess1.disabled = true
+        	guess2.disabled = true
+        	guess3.disabled = true
+        	guess4.disabled = true
         	document.getElementById("next_button").disabled = false
 		document.body.color = "Red"
-		/*console.log(document.getElementById("main_scrn").backgroundColor)
+		console.log(document.getElementById("main_scrn").backgroundColor)
 		setTimeout(function(){
 			document.getElementById("main_scrn").backgroundColor = "black"
-		}, 3000) */
+		}, 3000)
+		
+
 	}
-	
 	document.getElementById("score").innerHTML = "Score: " + score
 
 	deselect_all_options()
+	update()
 }
 
 function random_vendor(){
@@ -302,74 +234,24 @@ function correct_guess_dom(){
 	return CorrectCabinet/*`<input id={CorrectCabinet}, type="checkbox", value={CorrectCabinet}/><label for={CorrectCabinet}>${CorrectCabinet}</label> `*/
 }
 
-function reset_played_cabinets(){
-	if(playedCabinets.length >= notPlayedCabinets.length - 4){
-		console.log(notPlayedCabinets.length)
-		playedCabinets = []
-	}
-}
-
-function change_img(img){
-
-	document.getElementById("cabinetImage").src = img
-	
-}
-
-function compare_played_cabinets_and_correct_cabinet(){
-	var bool = false
-	playedCabinets.forEach(function(cabinet){if(cabinet == CorrectCabinet){bool = true;}})
-
-	return bool
-}
-
 function random_cabinet(doDom){
-	
-	reset_played_cabinets()
-
         var RandomVendor = random_vendor()
         var CabinetRng = Math.floor(Math.random() * storage.VendorDictionary[RandomVendor].length)
         var CabinetFolder = storage.VendorDictionary[RandomVendor][CabinetRng]
-        var cabinetDir = VendorsFolder + RandomVendor + "/" + CabinetFolder 
-        var cabinet = CabinetFolder.split(".")[0]
-	
-	
-
-	
-		/* Needs notPlayedCabinets to also have a vendor array to traverse the VendorFolder */
-		/*var CabinetRng = Math.floor(Math.random() * notPlayedCabinets.length)*/
-	
-		/*var cabinet = notPlayedCabinets[CabinetRng]
-		
-	var cabinetDir = VendorsFolder + "/" + cabinet*/
+        var cabinetDir = VendorsFolder + RandomVendor + "/" + CabinetFolder
+        var cabinet = cabinetDir.split("/")[3].split(".")[0]
 	var itemsHTML = document.getElementById("items")
 
-	console.log(playedCabinets)
-		
-      	 if (doDom == "true"){
-			
-					
+        if (doDom == "true"){
                 CorrectCabinet = cabinet
-		if(compare_played_cabinets_and_correct_cabinet()){
-			CorrectCabinet = ""
-			console.log("running random cabinet")
-			random_cabinet("true")
-		}else{
-			playedCabinets.push(cabinet)
-		
-			console.log("Played Cabinets: " + playedCabinets)
-                	GlobalCabinetDir = cabinetDir
-               		console.log(CorrectCabinet, "Correct Cabinet")
-		
-			change_img(cabinetDir)
-		
-			itemsHTML.backgroundImage = `url(${GlobalCabinetDir})`
-		}
-			
-		}
-
-		return cabinet
-	
-	
+                GlobalCabinetDir = cabinetDir
+                console.log(CorrectCabinet, "Correct Cabinet")
+		document.getElementById("cabinetImage").src = cabinetDir
+		itemsHTML.backgroundImage = `url(${GlobalCabinetDir})`
+		console.log(itemsHTML.style.backgroundImage)
+		console.log(itemsHTML)
+        }
+	return cabinet
 }
 
 function random_option(){
@@ -416,7 +298,9 @@ function reset_correct_answer(){
 	document.getElementById("answer_reveal").innerText = "Correct Cabinet: "
 }
 
-
+function update_dom(){
+	random_option_dom()
+}
 
 function update(){
 	
@@ -426,23 +310,19 @@ function update(){
 	enable_submit_button()
 	random_cabinet("true")
 	random_guesses()
-	random_option_dom()
 	document.getElementById("next_button").disabled = true
 	document.getElementById("submit").disabled = true
 	document.getElementById("menu").style.visibility = "visible"
 	CurrentInputGuess = ""
-	
+	update_dom()
 	
 }
 
 
 function main(){
-	fillNotPlayedCabinets()
 	update()
-	
-	/* true is telling the game that this is the initial start of the game */				
+	/* true is telling the game this is the initial start of the game */				
 	score_keeper(true)
-	
 }
 
 main()
