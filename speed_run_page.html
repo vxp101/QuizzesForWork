@@ -10,18 +10,23 @@
 document.body.innerHTML = `
 	<button id="menu" onclick={change_page("menu_page.html")}>&#8656; Menu </button>
 	<button id="ready_up" onclick={ready_up()}>Ready Up</button>
+
+	<div id="top_menu">
+	<h1 id="title"> Speed Run </h1>
+	<h2 id="timer">Timer: </h1>
+	<h2 id="highscore">Highscore: </h2>
+	<h3 id="answer_reveal">Correct Cabinet: </h3>
+
+	
+</div>
 <div id="game">
 <div id="background">
 
 </div>
-<div id="top_menu">
-	<h1 id="title"> Speed Run </h1>
-	<h2 id="timer">Timer: </h1>
-	<h2 id="highscore">Highscore: </h2>
+
+<div id="SideText">
 	<h2 id="score">Score: </h2>
 	<button id="reset" onclick={reset_game()}>Reset</button>
-	<h3 id="answer_reveal">Correct Cabinet: </h3>
-
 	
 </div>
 
